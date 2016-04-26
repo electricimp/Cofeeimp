@@ -2,17 +2,9 @@
 
 Impified _Jura IMPRESSA J9.3_. 
 
-## Building
-
-```
-npm i -g Builder
-pleasebuild agent.builder.nut > dist/agent.nut
-pleasebuild device.builder.nut > dist/device.nut
-```
-
 ## Pinout
 
-J9.3 has 7-pin interface located at the top-left side under the fresh cofee cover:
+J9.3 has a 7-pin interface located at the top-left side under the fresh cofee cover:
 
 (right-to-left)
 
@@ -26,6 +18,13 @@ J9.3 has 7-pin interface located at the top-left side under the fresh cofee cove
 
 Connection is 5V TTL UART, so a [logic level converter](https://www.sparkfun.com/products/12009) is needed. 
 
+## Building
+
+```
+npm i -g Builder
+pleasebuild agent.builder.nut > dist/agent.nut && pleasebuild device.builder.nut > dist/device.nut
+```
+
 ## License
 
-Do anything you want with this, at your own risk.
+Do anything you want with this but at your own risk.
