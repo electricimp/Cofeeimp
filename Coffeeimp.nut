@@ -93,6 +93,20 @@ class Coffeeimp {
         }.bindenv(this));
     }
 
+
+    /**
+     * Get # of 2-espressi made
+     * @return {Promise}
+     */
+    function get2EspressosCount() {
+        return Promise(function (resolve, reject) {
+            this.sendCommand("RE:00E0")
+                .then(function (res) {
+                    resolve(this._hexStringToInt(res.slice(3, 7)));
+                }.bindenv(this), reject);
+        }.bindenv(this));
+    }
+
     /**
      * Handle arriving data:
      *  - receive
