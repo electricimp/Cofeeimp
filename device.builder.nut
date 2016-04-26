@@ -37,7 +37,7 @@ function readCounters() {
             agent.send("counters", res) // send to agent
         });
 
-    imp.wakeup(30, readCounters) // repeat
+    imp.wakeup(60, readCounters) // repeat
 }
 
 /**
