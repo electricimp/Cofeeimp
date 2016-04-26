@@ -13,7 +13,9 @@ function main() {
     local m = Coffeeimp(hardware.uart12);
 //    m.sendCommand("RT:0000").then(@(v) server.log(v), @(e) server.error(e));
 //    m.dumpEEPROM(0, 16 * 2, false).then(@(v) server.log(v), @(e) server.error(e));
-    m.getEspressosCount().then(@(v) server.log(v), @(e) server.error(e));
+//    m.getEspressosCount().then(@(v) server.log(v), @(e) server.error(e));
+//    m.get2EspressosCount().then(@(v) server.log(v), @(e) server.error(e));
+    m.getRistrettosCount().then(@(v) server.log(v), @(e) server.error(e));
 }
 
 main();
