@@ -263,7 +263,11 @@ class Coffeeimp {
         return Promise(function (resolve, reject) {
             this.sendCommand(format("RE:%04X", address))
                 .then(function (res) {
-                    resolve(this._hexStringToInt(res.slice(3, 7)));
+                    if (type(res) == "string" && res.len() == 9) {
+                        resolve(this._hexStringToInt(res.slice(3, 7)));
+                    } else {
+                        reject();
+                    }
                 }.bindenv(this), reject);
         }.bindenv(this));
     }
