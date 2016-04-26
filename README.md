@@ -20,9 +20,14 @@ Connection is 5V TTL UART, so a [logic level converter](https://www.sparkfun.com
 
 ## Building
 
-```
+```sh
 npm i -g Builder
-pleasebuild agent.builder.nut > dist/agent.nut && pleasebuild device.builder.nut > dist/device.nut
+
+# device
+pleasebuild device.builder.nut > device.nut
+
+# agent
+pleasebuild agent.builder.nut > agent.nut
 ```
 
 ## License
