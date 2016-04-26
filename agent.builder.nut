@@ -1,9 +1,8 @@
 // libs
 @include once "github:electricimp/Rocky/Rocky.class.nut@v1.2.3"
-@ @include once "github:electricimp/Promise/Promise.class.nut@v2.0.0"
-@ @include once "github:electricimp/Firebase/firebase.agent.nut@v1.1.1"
-
 //
+
+const MYKEY = "miem0uoT"
 
 function main() {
     coffeeData <- null;
@@ -20,6 +19,23 @@ function main() {
 
 // GET /
 function onGetRoot(context) {
+
+    if (!(MYKEY in context.req.query)) {
+         context.send("Authorization required");
+         return;
+    }
+
+    local caffeine = coffeeData ? coffeeData.ristrettos * 75
+        + coffeeData.espressos * 75
+        + coffeeData.twoCoffees * 75 * 2
+        + coffeeData.latteMacchiatos * 75
+        + coffeeData.twoRistrettos * 75 * 2
+        + coffeeData.cappuccinos * 75
+        + coffeeData.twoEspressos * 75 * 2
+        + coffeeData.coffees * 75 : 0;
+
+    caffeine = (caffeine / 1000) + "," + caffeine % 1000;
+
     context.setHeader("content-type", "text/html");
     context.send(
 @"
@@ -30,39 +46,46 @@ function onGetRoot(context) {
                 body {
                     padding: 10;
                     text-align: center;
+                    background-image: url(https://electricimp.com/favicon.ico);
+                    background-size: 64px;
+                    background-repeat: no-repeat;
+
                 }
                 *, input {
-                    font-family: sans-serif;
-                    font-size: 12pt;
+                    font-family: 'Helvetica Neue', sans-serif;
+                    font-size: 10pt;
                 }
                 input {
                     font-size: 12pt;
-                    font-weight: bolder;
-                    padding: 16px;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 0px;
+                    padding: 14px;
                     zoom: 1.1;
                     background: white;
-                    border: 2px solid rgb(82, 82, 82);
+                    border: 2px solid #4A4A4A;
                     border-radius: 50%;
                     margin: 10px;
-                    min-width: 125px;
+                    min-width: 122px;
+                    color: #4A4A4A;
+                    cursor: pointer;
                 }
             </style>
         </head>
-        <body>"
-            + (coffeeData
-                ? http.jsonencode(coffeeData)
-                : "–"
-            ) + @"
-            <br><br>
-            <form method=POST action=" + http.agenturl() + @"/make>
-                <input type=submit name=type value=Milk><br>
+        <body>
+            <div style='position:absolute;opacity:0.5;width:65px;height:65px;background:white;left:0;top:0'></div>
+            <br><br><br>
+            <form method=POST action=" + http.agenturl() + "/make?" + MYKEY + @">
                 <input type=submit name=type value=Ristretto>
-                <input type=submit name=type value=Espresso>
-                <input type=submit name=type value=Capuccino>
-                <input type=submit name=type value=Latte>
+                <input type=submit name=type value=Espresso><br>
+                <input type=submit name=type value=Cappuccino>
+                <input type=submit name=type value=Latte><br>
                 <input type=submit name=type value=Coffee>
-                <script>// setTimeout(() => location.reload(), 3000)</script>
-            </form>
+                <input type=submit name=type value=Milk><br>
+                <input type=submit name=type value='Useless Button'>
+                <script> setTimeout(() => location.reload(), 10000)</script>
+            </form><br><br>
+<div style='font-size:150%;color:gray'>" + caffeine + @" mg<div style='font-size:75%;margin-top:10px'>caffeine consumed</div></div>
         </body>
 "
     );
@@ -70,10 +93,16 @@ function onGetRoot(context) {
 
 // POST /make
 function onPostMake(context) {
+
+    if (!(MYKEY in context.req.query)) {
+         context.send("Authorization required");
+         return;
+    }
+
     local type = context.req.body.type;
     server.log("Requested " + type);
-//    device.send("switchPower", on);
-    context.setHeader("location",  http.agenturl());
+    device.send("request", type);
+    context.setHeader("location",  http.agenturl() + "?" + MYKEY);
     context.send(301, "OK");
 }
 
