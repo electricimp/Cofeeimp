@@ -11,6 +11,7 @@ function main() {
     imp.setpowersave(true);
     machine <- Coffeeimp(hardware.uart12);
     readCounters();
+    agent.on("request", executeRequest);
 }
 
 /**
@@ -34,8 +35,59 @@ function readCounters() {
         .then(function (v) {
             server.log("counters: " + JSONEncoder.encode(res))
             agent.send("counters", res) // send to agent
-            imp.wakeup(15, readCounters) // repeat
         });
+
+    imp.wakeup(30, readCounters) // repeat
+}
+
+/**
+ * Read/send counters
+ */
+function doCarousel() {
+    local p = [
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuCounterClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuClockwise(),
+        @() machine.rotaryMenuCounterClockwise()
+    ];
+
+    Promise.serial(p)
+}
+
+/**
+ * Execute request from the agent
+ */
+function executeRequest(req) {
+    server.log("executing request for: " + req)
+
+    switch (req) {
+        case "Espresso": machine.makeEspresso(); break;
+        case "Ristretto": machine.makeRistretto(); break;
+        case "Cappuccino": machine.makeCappuccino(); break;
+        case "Latte": machine.makeLatteMacchiato(); break;
+        case "Coffee": machine.makeCoffee(); break;
+        case "Milk": machine.makeMilk(); break;
+        case "Useless Button": doCarousel(); break;
+        default: break;
+    }
 }
 
 main();
