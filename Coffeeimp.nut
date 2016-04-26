@@ -26,18 +26,19 @@ class Coffeeimp {
     function sendCommand(command) {
         return Promise(function (resolve, reject) {
             if (this._resolve) {
-                reject("Busy")
-            } else {
-                // clear input buffer
-                this._in = [];
-
-                // save resolve callback
-                this._resolve = resolve;
-
-                // send message
-                local message = this._encode(command + "\r\n");
-                this._uart.write(message);
+                // resolve previous command
+                this._resolve(null)
             }
+
+            // clear input buffer
+            this._in = [];
+
+            // save resolve callback
+            this._resolve = resolve;
+
+            // send message
+            local message = this._encode(command + "\r\n");
+            this._uart.write(message);
         }.bindenv(this));
     }
 
