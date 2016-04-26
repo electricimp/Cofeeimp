@@ -29,4 +29,4 @@ pleasebuild agent.builder.nut > dist/agent.nut && pleasebuild device.builder.nut
 
 Do anything you want with this but at your own risk.
 
- _@author Mikhail Yurasov <mikhail@electricimp.com>_
+ _@author Mikhail Yurasov \<mikhail@electricimp.com\>_
