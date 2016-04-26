@@ -3,10 +3,12 @@
  */
 class Coffeeimp {
 
+    _in = [];
+    _out = "";
     _uart = null;
     _outputTimer = null;
-    _out = "";
-    _in = [];
+    _resolve = null;
+    _reject = null;
 
     static OUTPUT_THROTTLE = 0.25;
 
@@ -19,11 +21,21 @@ class Coffeeimp {
      * Send a command to the machine
      * Line endings are added automatocally
      * @param {string} command
+     * @return {Promise}
      */
-    function _sendCommand(command) {
-        local message = this._encode(command + "\r\n");
-        this._in = [];
-        this._uart.write(message);
+    function sendCommand(command) {
+        return Promise(function (resolve, reject) {
+            // clear input buffer
+            this._in = [];
+
+            // save resolve/reject callbacks
+            this._resolve = resolve;
+            this._reject = reject;
+
+            // send message
+            local message = this._encode(command + "\r\n");
+            this._uart.write(message);
+        }.bindenv(this));
     }
 
     /**
@@ -53,13 +65,16 @@ class Coffeeimp {
 
         // detect message completion
         if (this._outputTimer) imp.cancelwakeup(this._outputTimer);
-        this._outputTimer = imp.wakeup(this.OUTPUT_THROTTLE, this._onResult.bindenv(this));
+        this._outputTimer = imp.wakeup(this.OUTPUT_THROTTLE, this._onMessage.bindenv(this));
     }
 
-    function _onResult() {
+    /**
+     * Handle completed message arrival
+     */
+    function _onMessage() {
         imp.cancelwakeup(this._outputTimer);
         this._outputTimer = null;
-        server.log(this._out);
+        if (this._resolve) this._resolve(this._out);
         this._out = "";
     }
 

@@ -11,7 +11,11 @@ function main() {
     imp.setpowersave(true);
 
     local m = Coffeeimp(hardware.uart12);
-    server.log(m._sendCommand("TY:")); // read device version
+
+    m.sendCommand("TY:")
+        .then(function (result) {
+            server.log(result);
+        });
 }
 
 main();
