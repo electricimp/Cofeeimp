@@ -24,6 +24,7 @@ J9.3 has 7-pin interface located at the top-left side under the fresh cofee cove
 6. TX
 7. -
 
+Connection is 5V TTL UART, so to connect it to _imp_, a [logic level converter](https://www.sparkfun.com/products/12009) is needed. 
 
 ## License
 
