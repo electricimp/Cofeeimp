@@ -146,6 +146,14 @@ class Coffeeimp {
     }
 
     /**
+     * Get # of 2-ristretti made
+     * @return {Promise}
+     */
+    function get2RistrettosCount() {
+        return this._readEEPROM(0x00E1);
+    }
+
+    /**
      * Get # of 2-coffees made
      * @return {Promise}
      */

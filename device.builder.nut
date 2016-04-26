@@ -15,7 +15,7 @@ function main() {
 //    m.dumpEEPROM(0, 16 * 2, false).then(@(v) server.log(v), @(e) server.error(e));
 //    m.getEspressosCount().then(@(v) server.log(v), @(e) server.error(e));
 //    m.get2EspressosCount().then(@(v) server.log(v), @(e) server.error(e));
-    m.getRistrettosCount().then(@(v) server.log(v), @(e) server.error(e));
+    m.get2RistrettosCount().then(@(v) server.log(v), @(e) server.error(e));
 }
 
 main();
