@@ -7,6 +7,7 @@ class Coffeeimp {
     _in = [];
     _out = "";
     _uart = null;
+    _reject = null;
     _resolve = null;
     _outputTimer = null;
 
@@ -25,9 +26,12 @@ class Coffeeimp {
      */
     function sendCommand(command) {
         return Promise(function (resolve, reject) {
+
+            // reject previous command
             if (this._resolve) {
-                // resolve previous command
-                this._resolve(null)
+                this._reject();
+                this._resolve = null;
+                this._reject = null;
             }
 
             // clear input buffer
@@ -35,6 +39,7 @@ class Coffeeimp {
 
             // save resolve callback
             this._resolve = resolve;
+            this._reject = reject;
 
             // send message
             local message = this._encode(command + "\r\n");
