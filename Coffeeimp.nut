@@ -162,6 +162,94 @@ class Coffeeimp {
     }
 
     /**
+     * Make espresso
+     * @return {Promise}
+     */
+    function makeEspresso() {
+        return this.sendCommand("FA:03");
+    }
+
+    /**
+     * Make coffee
+     * @return {Promise}
+     */
+    function makeCoffee() {
+        return this.sendCommand("FA:04");
+    }
+
+    /**
+     * Make ristretto
+     * @return {Promise}
+     */
+    function makeRistretto() {
+        return this.sendCommand("FA:05");
+    }
+
+    /**
+     * Make cappuccino
+     * @return {Promise}
+     */
+    function makeCappuccino() {
+        return this.sendCommand("FA:06");
+    }
+
+    /**
+     * Make latte macchiato
+     * @return {Promise}
+     */
+    function makeLatteMacchiato() {
+        return this.sendCommand("FA:07");
+    }
+
+    /**
+     * Make hot water
+     * @return {Promise}
+     */
+    function makeHotWater() {
+        return this.sendCommand("FA:08");
+    }
+
+    /**
+     * Make milk
+     * @return {Promise}
+     */
+    function makeMilk() {
+        return this.sendCommand("FA:09");
+    }
+
+    /**
+     * Rinse milk system
+     * @return {Promise}
+     */
+    function rinseMilkSystem() {
+        return this.sendCommand("FA:0A");
+    }
+
+    /**
+     * Rotary menu clockwise
+     * @return {Promise}
+     */
+    function rotaryMenuClockwise() {
+        return this.sendCommand("FA:0D");
+    }
+
+    /**
+     * Rotary menu counter-clockwise
+     * @return {Promise}
+     */
+    function rotaryMenuCounterClockwise() {
+        return this.sendCommand("FA:0C");
+    }
+
+    /**
+     * Power the machine off
+     * @return {Promise}
+     */
+    function powerOff() {
+        return this.sendCommand("AN:02");
+    }
+
+    /**
      * Read a word from EEPROM as integer
      * @return {Promise}
      */
