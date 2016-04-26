@@ -39,6 +39,44 @@ class Coffeeimp {
     }
 
     /**
+     * Dump eeprom to console
+     * @param {number=0} start
+     * @param {number=0x400} end
+     * @param {bool} log
+     * @return {Promise}
+     */
+    function dumpEEPROM(start = 0, end = 0x0400, log = true) {
+        local STEP = 0x10;
+        local res = "";
+
+        // align start address
+        start = start - start % STEP;
+        local address = start - STEP;
+
+        return Promise(function (resolve, reject) {
+
+            // issue RT: commands
+            Promise.loop(
+                function () {
+                    return address < end - STEP;
+                },
+                function () {
+                    address += STEP;
+                    local p = this.sendCommand("RT:" + format("%04X", address))
+                        .then(function (v) {
+                            local r = format("%04X-%04X: ", address, address + STEP - 1) + v.slice(3);
+                            res += r;
+                            if (log) server.log(r);
+                        });
+                    return p;
+                }.bindenv(this)
+            )
+
+            .then(@(v) resolve(res));
+        }.bindenv(this));
+    }
+
+    /**
      * Handle arriving data:
      *  - receive
      *  - decode

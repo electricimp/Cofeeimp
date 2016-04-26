@@ -11,11 +11,7 @@ function main() {
     imp.setpowersave(true);
 
     local m = Coffeeimp(hardware.uart12);
-
-    m.sendCommand("TY:")
-        .then(function (result) {
-            server.log(result);
-        });
+    m.dumpEEPROM(0, 16 * 2, false).then(@(v) server.log(v));
 }
 
 main();
