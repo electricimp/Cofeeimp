@@ -340,7 +340,6 @@ class Coffeeimp {
     _uart = null;
     _outputTimer = null;
     _resolve = null;
-    _reject = null;
 
     static OUTPUT_THROTTLE = 0.25;
 
@@ -357,16 +356,72 @@ class Coffeeimp {
      */
     function sendCommand(command) {
         return Promise(function (resolve, reject) {
-            // clear input buffer
-            this._in = [];
+            if (this._resolve) {
+                reject("Busy")
+            } else {
+                // clear input buffer
+                this._in = [];
 
-            // save resolve/reject callbacks
-            this._resolve = resolve;
-            this._reject = reject;
+                // save resolve callback
+                this._resolve = resolve;
 
-            // send message
-            local message = this._encode(command + "\r\n");
-            this._uart.write(message);
+                // send message
+                local message = this._encode(command + "\r\n");
+                this._uart.write(message);
+            }
+        }.bindenv(this));
+    }
+
+    /**
+     * Dump eeprom to console
+     * @param {number=0} start
+     * @param {number=0x400} end
+     * @param {bool} log
+     * @return {Promise}
+     */
+    function dumpEEPROM(start = 0, end = 0x0400, log = true) {
+        local STEP = 0x10;
+        local res = "";
+
+        // align start address
+        start = start - start % STEP;
+        local address = start - STEP;
+
+        return Promise(function (resolve, reject) {
+
+            // issue RT: commands
+            Promise.loop(
+                function () {
+                    return address < end - STEP;
+                },
+                function () {
+                    address += STEP;
+                    local p = this.sendCommand("RT:" + format("%04X", address))
+                        .then(function (v) {
+                            local r =
+                                format("%04X-%04X: ", address, address + STEP - 1)
+                                + v.slice(3, 67);
+                            res += r + "\n";
+                            if (log) server.log(r);
+                        });
+                    return p;
+                }.bindenv(this)
+            )
+            .then(@(v) resolve(res), reject);
+
+        }.bindenv(this));
+    }
+
+    /**
+     * Get # of espressos made
+     * @return {Promise}
+     */
+    function getEspressosCount() {
+        return Promise(function (resolve, reject) {
+            this.sendCommand("RE:0000")
+                .then(function (res) {
+                    resolve(this._hexStringToInt(res.slice(3, 7)));
+                }.bindenv(this), reject);
         }.bindenv(this));
     }
 
@@ -406,7 +461,12 @@ class Coffeeimp {
     function _onMessage() {
         imp.cancelwakeup(this._outputTimer);
         this._outputTimer = null;
-        if (this._resolve) this._resolve(this._out);
+
+        if (this._resolve) {
+            this._resolve(this._out);
+            this._resolve = null;
+        }
+
         this._out = "";
     }
 
@@ -477,6 +537,23 @@ class Coffeeimp {
             return value & ~(1 << bit);
         }
     }
+
+    /**
+     * Convert hex string to an integer
+     * @see https://electricimp.com/docs/troubleshooting/tips/hex/
+     */
+    function _hexStringToInt(hexString) {
+        // Get the integer value of the remaining string
+        local intValue = 0;
+
+        foreach (character in hexString) {
+            local nibble = character - '0';
+            if (nibble > 9) nibble = ((nibble & 0x1F) - 7);
+            intValue = (intValue << 4) + nibble;
+        }
+
+        return intValue;
+    }
 }
 
 //
@@ -486,11 +563,9 @@ function main() {
     imp.setpowersave(true);
 
     local m = Coffeeimp(hardware.uart12);
-
-    m.sendCommand("TY:")
-        .then(function (result) {
-            server.log(result);
-        });
+//    m.sendCommand("RT:0000").then(@(v) server.log(v), @(e) server.error(e));
+//    m.dumpEEPROM(0, 16 * 2, false).then(@(v) server.log(v), @(e) server.error(e));
+    m.getEspressosCount().then(@(v) server.log(v), @(e) server.error(e));
 }
 
 main();
