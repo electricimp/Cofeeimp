@@ -1,6 +1,6 @@
 # Coffeeimp
 
-Impified _Jura IMPRESSA 9.3_. 
+Impified _Jura IMPRESSA J9.3_. 
 
 ## Building
 
