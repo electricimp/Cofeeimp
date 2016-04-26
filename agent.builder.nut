@@ -5,6 +5,9 @@
 //
 
 function main() {
+    device.on("counters", function (data) {
+        server.log(http.jsonencode(data));
+    });
 }
 
 main();
