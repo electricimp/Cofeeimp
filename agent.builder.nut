@@ -34,7 +34,7 @@ function onGetRoot(context) {
         + coffeeData.twoEspressos * 75 * 2
         + coffeeData.coffees * 75 : 0;
 
-    caffeine = (caffeine / 1000) + "," + caffeine % 1000;
+    caffeine = (caffeine / 1000) + "," + format("%03d", caffeine % 1000);
 
     context.setHeader("content-type", "text/html");
     context.send(
