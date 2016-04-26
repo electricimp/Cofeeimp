@@ -417,8 +417,80 @@ class Coffeeimp {
      * @return {Promise}
      */
     function getEspressosCount() {
+        return this._readEEPROM(0x0000);
+    }
+
+    /**
+     * Get # of ristrettos made
+     * @return {Promise}
+     */
+    function getRistrettosCount() {
+        return this._readEEPROM(0x0001);
+    }
+
+    /**
+     * Get # of 2-espressi made
+     * @return {Promise}
+     */
+    function getCoffeesCount() {
+        return this._readEEPROM(0x0002);
+    }
+
+    /**
+     * Get # of capuccinos made
+     * @return {Promise}
+     */
+    function getCappuccinosCount() {
+        return this._readEEPROM(0x0004);
+    }
+
+    /**
+     * Get # of latte macchiatos made
+     * @return {Promise}
+     */
+    function getLatteMacchiatosCount() {
+        return this._readEEPROM(0x0005);
+    }
+
+    /**
+     * Get # of 1-portion milks
+     * @return {Promise}
+     */
+    function get1PortionMilkCount() {
+        return this._readEEPROM(0x0013);
+    }
+
+    /**
+     * Get # of hot waters made
+     * @return {Promise}
+     */
+    function getHotWaterCount() {
+        return this._readEEPROM(0x0014);
+    }
+
+    /**
+     * Get # of 2-espressi made
+     * @return {Promise}
+     */
+    function get2EspressosCount() {
+        return this._readEEPROM(0x00E0);
+    }
+
+    /**
+     * Get # of 2-coffees made
+     * @return {Promise}
+     */
+    function get2CoffeesCount() {
+        return this._readEEPROM(0x00E2);
+    }
+
+    /**
+     * Read a word from EEPROM as integer
+     * @return {Promise}
+     */
+    function _readEEPROM(address) {
         return Promise(function (resolve, reject) {
-            this.sendCommand("RE:0000")
+            this.sendCommand(format("RE:%04X", address))
                 .then(function (res) {
                     resolve(this._hexStringToInt(res.slice(3, 7)));
                 }.bindenv(this), reject);
@@ -565,7 +637,9 @@ function main() {
     local m = Coffeeimp(hardware.uart12);
 //    m.sendCommand("RT:0000").then(@(v) server.log(v), @(e) server.error(e));
 //    m.dumpEEPROM(0, 16 * 2, false).then(@(v) server.log(v), @(e) server.error(e));
-    m.getEspressosCount().then(@(v) server.log(v), @(e) server.error(e));
+//    m.getEspressosCount().then(@(v) server.log(v), @(e) server.error(e));
+//    m.get2EspressosCount().then(@(v) server.log(v), @(e) server.error(e));
+    m.getRistrettosCount().then(@(v) server.log(v), @(e) server.error(e));
 }
 
 main();
