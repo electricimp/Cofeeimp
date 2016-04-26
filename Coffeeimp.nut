@@ -1,13 +1,14 @@
 /**
  * Made for Jura IMPRESSA J9.3 machine
+ * @author Mikhail Yurasov <mikhail@electricimp.com>
  */
 class Coffeeimp {
 
     _in = [];
     _out = "";
     _uart = null;
-    _outputTimer = null;
     _resolve = null;
+    _outputTimer = null;
 
     static OUTPUT_THROTTLE = 0.25;
 
